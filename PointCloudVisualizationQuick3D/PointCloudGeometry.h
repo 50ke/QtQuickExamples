@@ -6,7 +6,8 @@
 #include <QVector3D>
 #include <QVariant>
 #include <QColor>
-
+#include <QFile>
+#include <QTextStream>
 
 class PointCloudGeometry : public QQuick3DGeometry
 {
@@ -14,6 +15,7 @@ class PointCloudGeometry : public QQuick3DGeometry
     QML_NAMED_ELEMENT(PointCloudGeometry)
 public:
     explicit PointCloudGeometry();
+    Q_INVOKABLE void loadFromFile(const QUrl &fileUrl);
 
 public slots:
     void setPoints(const QVariantList &points, const QVariantList &intensities);

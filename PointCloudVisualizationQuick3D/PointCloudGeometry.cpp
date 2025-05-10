@@ -9,29 +9,57 @@ PointCloudGeometry::PointCloudGeometry()
     addAttribute(Attribute::ColorSemantic, 3 * sizeof(float), Attribute::F32Type);
 }
 
-void PointCloudGeometry::setPoints(const QVariantList &points, const QVariantList &intensities)
-{
-    if (points.size() != intensities.size()) {
-        qWarning("Points and intensities size mismatch!");
+void PointCloudGeometry::loadFromFile(const QUrl &fileUrl){
+    QString filePath = fileUrl.toLocalFile();
+    QFile file(filePath);
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "无法打开文件:" << filePath;
         return;
     }
 
     m_points.clear();
     m_intensities.clear();
 
-    for (int i = 0; i < points.size(); ++i) {
-        QVariant pointVar = points[i];
-        if (pointVar.canConvert<QVector3D>()) {
-            m_points.append(pointVar.value<QVector3D>());
-        }
+    QTextStream in(&file);
+    while(!in.atEnd()){
+        QString line = in.readLine().trimmed();
+        QStringList parts = line.split(" ", Qt::SkipEmptyParts);
 
-        QVariant intensityVar = intensities[i];
-        bool ok;
-        float intensity = intensityVar.toFloat(&ok);
-        if (ok) m_intensities.append(intensity);
+        bool ok[4] = {false};
+        float x = parts[0].toFloat(&ok[0]);
+        float y = parts[1].toFloat(&ok[1]);
+        float z = parts[2].toFloat(&ok[2]);
+        float intensity = parts[3].toFloat(&ok[3]);
+        m_points.append(QVector3D(x, y, z));
+        m_intensities.append(intensity);
     }
-
     updateData();
+}
+
+void PointCloudGeometry::setPoints(const QVariantList &points, const QVariantList &intensities)
+{
+    // if (points.size() != intensities.size()) {
+    //     qWarning("Points and intensities size mismatch!");
+    //     return;
+    // }
+
+    // m_points.clear();
+    // m_intensities.clear();
+
+    // for (int i = 0; i < points.size(); ++i) {
+    //     QVariant pointVar = points[i];
+    //     if (pointVar.canConvert<QVector3D>()) {
+    //         m_points.append(pointVar.value<QVector3D>());
+    //     }
+
+    //     QVariant intensityVar = intensities[i];
+    //     bool ok;
+    //     float intensity = intensityVar.toFloat(&ok);
+    //     if (ok) m_intensities.append(intensity);
+    // }
+
+    // updateData();
 }
 
 void PointCloudGeometry::updateData()

@@ -4,11 +4,32 @@ import QtQuick.Layouts
 import QtQuick3D
 import QtQuick3D.Helpers
 import PointCloud 1.0
+import QtQuick.Dialogs
 
-Window {
+ApplicationWindow {
     width: 800
     height: 600
     visible: true
+
+    menuBar: MenuBar {
+        Menu {
+            title: qsTr("文件")
+            Action {
+                text: qsTr("打开")
+                onTriggered: fileDialog.open()
+            }
+        }
+    }
+
+    FileDialog {
+            id: fileDialog
+            title: qsTr("选择点云文件")
+            nameFilters: ["TXT 文件 (*.txt)", "所有文件 (*)"]
+            onAccepted: {
+                let filePath = selectedFile.toString().replace(/^(file:\/{3})/,"");
+                pointCloud.loadFromFile(selectedFile) // 调用点云加载方法
+            }
+        }
 
     View3D {
         anchors.fill: parent
@@ -20,48 +41,26 @@ Window {
 
         PerspectiveCamera {
             id: camera
-            position: Qt.vector3d(0, 0, 50)
-            eulerRotation.x: 30
+            position: Qt.vector3d(0, 50, 100)
+            eulerRotation.x: -30
         }
 
         Model {
             geometry: PointCloudGeometry {
                 id: pointCloud
             }
-            materials: [ PrincipledMaterial {
-                vertexColorsEnabled: true
-                lighting: PrincipledMaterial.NoLighting
-            } ]
+            materials: [
+                PrincipledMaterial {
+                    vertexColorsEnabled: true
+                    lighting: PrincipledMaterial.NoLighting
+                }
+            ]
         }
 
         OrbitCameraController {
             origin: camera
             camera: camera
             anchors.fill: parent
-        }
-
-        Component.onCompleted: {
-            // 生成测试数据（球面点云）
-            let points = [];
-            let intensities = [];
-            const pointCount = 50000;
-
-            for (let i = 0; i < pointCount; ++i) {
-                // 球坐标系参数
-                let radius = Math.random() * 15;
-                let theta = Math.random() * Math.PI * 2;
-                let phi = Math.random() * Math.PI;
-
-                // 转换为笛卡尔坐标
-                let x = radius * Math.sin(phi) * Math.cos(theta);
-                let y = radius * Math.sin(phi) * Math.sin(theta);
-                let z = radius * Math.cos(phi);
-
-                points.push(Qt.vector3d(x, y, z));
-                intensities.push(Math.random());
-            }
-
-            pointCloud.setPoints(points, intensities);
         }
     }
 }
