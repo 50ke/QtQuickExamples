@@ -4,5 +4,5 @@ Window {
     width: 640
     height: 480
     visible: true
-    title: qsTr("PointCloudVisualizationQuick3D")
+    title: qsTr("PointCloudVisualizationVtk")
 }
