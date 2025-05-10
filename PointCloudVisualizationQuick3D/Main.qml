@@ -26,7 +26,6 @@ ApplicationWindow {
             title: qsTr("选择点云文件")
             nameFilters: ["TXT 文件 (*.txt)", "所有文件 (*)"]
             onAccepted: {
-                let filePath = selectedFile.toString().replace(/^(file:\/{3})/,"");
                 pointCloud.loadFromFile(selectedFile) // 调用点云加载方法
             }
         }
