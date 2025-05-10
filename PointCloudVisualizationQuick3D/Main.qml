@@ -32,18 +32,15 @@ ApplicationWindow {
 
     View3D {
         anchors.fill: parent
-
         environment: SceneEnvironment {
             clearColor: "#1a1a1a"
             backgroundMode: SceneEnvironment.Color
         }
-
         PerspectiveCamera {
             id: camera
             position: Qt.vector3d(0, 50, 100)
             eulerRotation.x: -30
         }
-
         Model {
             geometry: PointCloudGeometry {
                 id: pointCloud
@@ -55,7 +52,6 @@ ApplicationWindow {
                 }
             ]
         }
-
         OrbitCameraController {
             origin: camera
             camera: camera
