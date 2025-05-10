@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# QT
+CMakeLists.txt.user
+build/
